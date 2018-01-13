@@ -80,6 +80,7 @@ const messages = {
   invalidVersion: 'Invalid version supplied.',
   requiredVersionInRange: 'Required version in range.',
   packageNotFoundRegistry: "Couldn't find package $0 on the $1 registry.",
+  requiredPackageNotFoundRegistry: "Couldn't find package $0 required by $1 on the $2 registry.",
   doesntExist: "$0 doesn't exist.",
   missingRequiredPackageKey: `Package $0 doesn't have a $1.`,
   invalidAccess: 'Invalid argument for access, expected public or restricted.',

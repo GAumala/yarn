@@ -4,9 +4,11 @@ export class MessageError extends Error {
   constructor(msg: string, code?: string) {
     super(msg);
     this.code = code;
+    this.isMessageError = true;
   }
 
   code: ?string;
+  isMessageError: boolean;
 }
 
 export class ProcessSpawnError extends MessageError {
