@@ -71,20 +71,11 @@ export async function packTarball(
     filters = ignoreLinesToRegex(bundledDependencies.map((name): string => `!${folder}/${name}`), '.');
   }
 
-  // `files` field
-  if (onlyFiles) {
-    let lines = [
-      '*', // ignore all files except those that are explicitly included with a negation filter
-    ];
-    lines = lines.concat(
-      onlyFiles.map((filename: string): string => `!${filename}`),
-      onlyFiles.map((filename: string): string => `!${path.join(filename, '**')}`),
-    );
-    const regexes = ignoreLinesToRegex(lines, '.');
-    filters = filters.concat(regexes);
-  }
+  // if package.json specifies files, take only those, otherwise take all
+  const files = onlyFiles
+    ? await fs.findFilesWithPatterns(config.cwd, new Set(FOLDERS_IGNORE), onlyFiles)
+    : await fs.walk(config.cwd, null, new Set(FOLDERS_IGNORE));
 
-  const files = await fs.walk(config.cwd, null, new Set(FOLDERS_IGNORE));
   const dotIgnoreFiles = filterOverridenGitignores(files);
 
   // create ignores

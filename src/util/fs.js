@@ -821,6 +821,30 @@ export async function walk(
   return files;
 }
 
+export async function findFilesWithPatterns(
+  rootDir: string,
+  ignoreBasenames?: Set<string> = new Set(),
+  filePatterns: Array<string>,
+): Promise<WalkFiles> {
+  let filtered: WalkFiles = [];
+  for (const pattern of filePatterns) {
+    const stat = await lstat(pattern);
+    const absolutePath = path.join(rootDir, pattern);
+    filtered.push({
+      relative: pattern,
+      basename: pattern,
+      absolute: absolutePath,
+      mtime: +stat.mtime,
+    });
+
+    if (stat.isDirectory()) {
+      const subFiles = await walk(absolutePath, pattern, ignoreBasenames);
+      filtered = filtered.concat(subFiles);
+    }
+  }
+  return filtered;
+}
+
 export async function getFileSizeOnDisk(loc: string): Promise<number> {
   const stat = await lstat(loc);
   const {size, blksize: blockSize} = stat;
